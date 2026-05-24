@@ -17,6 +17,7 @@ signals:
     void needAuthentication();
 
 private:
+    void loadCredentials();
     bool shouldRefreshToken();
     QNetworkReply *get(QString &endpoint, QHash<QString, QString> params = {},
                        bool auth = false);

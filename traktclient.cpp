@@ -11,6 +11,11 @@ TraktClient::TraktClient(QObject *parent)
     : QObject(parent), m_baseUrl("https://api.trakt.tv"), m_settings(this) {
 
     m_manager = new QNetworkAccessManager(this);
+    m_oauth = new QOAuth2AuthorizationCodeFlow(this);
+    loadCredentials();
+}
+
+void TraktClient::loadCredentials() {
     m_clientId = m_settings.value("app/client_id").toString();
     m_clientSecret = m_settings.value("app/client_secret").toString();
 
@@ -26,7 +31,6 @@ TraktClient::TraktClient(QObject *parent)
 }
 
 void TraktClient::authenticate() {
-    m_oauth = new QOAuth2AuthorizationCodeFlow(this);
     m_oauth->setClientIdentifier(m_clientId);
     m_oauth->setClientIdentifierSharedKey(m_clientSecret);
     m_oauth->setAuthorizationUrl(QUrl(m_baseUrl + "/oauth/authorize"));
