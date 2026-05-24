@@ -1,0 +1,4 @@
+build
+.qmake*
+.cache
+compile_commands.json
