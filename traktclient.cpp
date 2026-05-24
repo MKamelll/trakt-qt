@@ -13,6 +13,16 @@ TraktClient::TraktClient(QObject *parent)
     m_manager = new QNetworkAccessManager(this);
     m_clientId = m_settings.value("app/client_id").toString();
     m_clientSecret = m_settings.value("app/client_secret").toString();
+
+    if (m_settings.contains("auth/access_token")) {
+        m_oauth->setToken(m_settings.value("auth/access_token").toString());
+        m_oauth->setRefreshToken(
+            m_settings.value("auth/refresh_token").toString());
+        m_expiresAt = QDateTime::fromString(
+            m_settings.value("auth/expires_at").toString(), Qt::ISODate);
+    } else {
+        emit needAuthentication();
+    }
 }
 
 void TraktClient::authenticate() {
@@ -43,9 +53,17 @@ void TraktClient::authenticate() {
         m_settings.setValue("auth/access_token", m_oauth->token());
         m_settings.setValue("auth/refresh_token", m_oauth->refreshToken());
         m_settings.setValue("auth/expires_at",
-                            m_oauth->expirationAt().toMSecsSinceEpoch());
+                            m_oauth->expirationAt().toString(Qt::ISODate));
+        m_expiresAt = m_oauth->expirationAt();
         emit authenticated();
     });
 
     m_oauth->grant();
 }
+
+bool TraktClient::shouldRefreshToken() {
+    return QDateTime::currentDateTime() >= m_expiresAt;
+}
+
+QNetworkReply *TraktClient::get(QString &endpoint,
+                                QHash<QString, QString> params, bool auth) {}
