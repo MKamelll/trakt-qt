@@ -9,10 +9,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     auto traktClient = new TraktClient(this);
 
-    auto *centralWidget = new QWidget;
-    auto *vbox = new QVBoxLayout(centralWidget);
+    auto centralWidget = new QWidget;
+    auto vbox = new QVBoxLayout(centralWidget);
 
-    auto *loginBtn = new QPushButton("Login", this);
+    auto loginBtn = new QPushButton("Login", this);
 
     vbox->addWidget(loginBtn, 25, Qt::AlignCenter);
 

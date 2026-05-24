@@ -8,14 +8,12 @@
 #include <QVariant>
 
 TraktClient::TraktClient(QObject *parent)
-    : QObject(parent), m_baseUrl("https://api.trakt.tv"), m_settings(this) {
+    : QObject(parent), m_baseUrl("https://api.trakt.tv"), m_settings(this),
+      m_isAuthenticated(false) {
 
     m_manager = new QNetworkAccessManager(this);
     m_oauth = new QOAuth2AuthorizationCodeFlow(this);
-    loadCredentials();
-}
 
-void TraktClient::loadCredentials() {
     m_clientId = m_settings.value("app/client_id").toString();
     m_clientSecret = m_settings.value("app/client_secret").toString();
 
@@ -25,10 +23,11 @@ void TraktClient::loadCredentials() {
             m_settings.value("auth/refresh_token").toString());
         m_expiresAt = QDateTime::fromString(
             m_settings.value("auth/expires_at").toString(), Qt::ISODate);
-    } else {
-        emit needAuthentication();
+        m_isAuthenticated = true;
     }
 }
+
+bool TraktClient::isAuthenticated() { return m_isAuthenticated; }
 
 void TraktClient::authenticate() {
     m_oauth->setClientIdentifier(m_clientId);

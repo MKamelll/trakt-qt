@@ -11,13 +11,12 @@ public:
     TraktClient(QObject *parent = nullptr);
 
     void authenticate();
+    bool isAuthenticated();
 
 signals:
     void authenticated();
-    void needAuthentication();
 
 private:
-    void loadCredentials();
     bool shouldRefreshToken();
     QNetworkReply *get(QString &endpoint, QHash<QString, QString> params = {},
                        bool auth = false);
@@ -29,4 +28,5 @@ private:
     QNetworkAccessManager *m_manager;
     QOAuth2AuthorizationCodeFlow *m_oauth;
     QDateTime m_expiresAt;
+    bool m_isAuthenticated;
 };
