@@ -4,6 +4,8 @@
 #include <QString>
 #include <QOAuth2AuthorizationCodeFlow>
 #include <QSettings>
+#include <QJsonDocument>
+#include <QJsonArray>
 
 class TraktClient : public QObject {
     Q_OBJECT
@@ -12,13 +14,15 @@ public:
 
     void authenticate();
     bool isAuthenticated();
+    void search(QString query);
 
 signals:
     void authenticated();
+    void searchDone(QJsonArray results);
 
 private:
     bool shouldRefreshToken();
-    QNetworkReply *get(QString &endpoint, QHash<QString, QString> params = {},
+    QNetworkReply *get(QString endpoint, QHash<QString, QString> params = {},
                        bool auth = false);
 
     QString m_baseUrl;

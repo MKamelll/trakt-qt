@@ -8,6 +8,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     resize(640, 420);
 
     auto traktClient = new TraktClient(this);
+    traktClient->search("breaking bad");
+
+    connect(traktClient, &TraktClient::searchDone, this,
+            [=](QJsonArray arr) { qDebug() << arr << "\n"; });
 
     auto centralWidget = new QWidget;
     auto vbox = new QVBoxLayout(centralWidget);

@@ -6,6 +6,7 @@
 #include <QJsonObject>
 #include <QDesktopServices>
 #include <QVariant>
+#include <QNetworkReply>
 
 TraktClient::TraktClient(QObject *parent)
     : QObject(parent), m_baseUrl("https://api.trakt.tv"), m_settings(this),
@@ -68,5 +69,37 @@ bool TraktClient::shouldRefreshToken() {
     return QDateTime::currentDateTime() >= m_expiresAt;
 }
 
-QNetworkReply *TraktClient::get(QString &endpoint,
-                                QHash<QString, QString> params, bool auth) {}
+QNetworkReply *TraktClient::get(QString endpoint,
+                                QHash<QString, QString> params, bool auth) {
+
+    if (shouldRefreshToken()) {
+        m_oauth->refreshTokens();
+    }
+
+    QUrl url(m_baseUrl + endpoint);
+    QUrlQuery query;
+
+    for (const auto &[key, value] : std::as_const(params).asKeyValueRange()) {
+        query.addQueryItem(key, value);
+    }
+    url.setQuery(query);
+
+    QNetworkRequest req(url);
+    req.setRawHeader("Content-Type", "application/json");
+    req.setRawHeader("trakt-api-version", "2");
+    req.setRawHeader("trakt-api-key", m_clientId.toUtf8());
+
+    if (auth)
+        req.setRawHeader("Authorization", m_oauth->token().toLatin1());
+
+    return m_manager->get(req);
+}
+
+void TraktClient::search(QString query) {
+    auto reply = get("/search/show", {{"query", query}});
+    connect(reply, &QNetworkReply::finished, this, [=]() {
+        reply->deleteLater();
+        QJsonDocument doc = QJsonDocument::fromJson(reply->readAll());
+        emit searchDone(doc.array());
+    });
+}
