@@ -1,5 +1,6 @@
 #include <QApplication>
 #include <QSettings>
+#include <QFile>
 #include "mainwindow.hpp"
 
 int main(int argc, char **argv) {
@@ -7,6 +8,9 @@ int main(int argc, char **argv) {
     QCoreApplication::setOrganizationName("trakt-qt");
     QCoreApplication::setApplicationName("trakt-qt");
     QSettings::setDefaultFormat(QSettings::IniFormat);
+    QFile file(":/styles.css");
+    if (file.open(QFile::ReadOnly))
+        qApp->setStyleSheet(file.readAll());
 
     MainWindow w;
 

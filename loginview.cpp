@@ -1,9 +1,9 @@
-#include "loginwindow.hpp"
+#include "loginview.hpp"
 #include <QVBoxLayout>
 #include <QPushButton>
 #include "traktclient.hpp"
 
-LoginWindow::LoginWindow(QWidget *parent) : QWidget(parent) {
+LoginView::LoginView(QWidget *parent) : QWidget(parent) {
     auto vbox = new QVBoxLayout(this);
 
     auto loginBtn = new QPushButton("Login", this);

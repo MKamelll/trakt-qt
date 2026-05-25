@@ -1,0 +1,23 @@
+QListWidget {
+    border: none;
+    background: transparent;
+}
+
+QListWidget::item {
+    border: none;
+    padding: 4px;
+}
+
+QListWidget::item:selected {
+    background: blue;
+}
+
+QLineEdit {
+    border: 1px solid white;
+    border-radius: 4px;
+    padding: 4px 8px;
+}
+
+QLineEdit:focus {
+    border-color: blue;
+}

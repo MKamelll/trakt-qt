@@ -12,11 +12,15 @@ OBJECTS_DIR = build
 
 HEADERS += mainwindow.hpp \
         traktclient.hpp \
-        loginwindow.hpp \
-        homewindow.hpp
+        loginview.hpp \
+        homeview.hpp \
+        searchview.hpp
 
 SOURCES += main.cpp \
         mainwindow.cpp \
         traktclient.cpp \
-        loginwindow.cpp \
-        homewindow.cpp
+        loginview.cpp \
+        homeview.cpp \
+        searchview.cpp
+
+RESOURCES += resources.qrc
