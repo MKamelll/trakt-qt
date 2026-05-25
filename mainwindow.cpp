@@ -7,10 +7,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     setWindowTitle("trakt");
     resize(640, 420);
 
-    auto traktClient = new TraktClient(this);
-    traktClient->search("breaking bad");
+    TraktClient::instance()->search("breaking bad");
 
-    connect(traktClient, &TraktClient::searchDone, this,
+    connect(TraktClient::instance(), &TraktClient::searchDone, this,
             [=](QList<StandardShow> arr) { qDebug() << arr << "\n"; });
 
     auto centralWidget = new QWidget;
@@ -21,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     vbox->addWidget(loginBtn, 25, Qt::AlignCenter);
 
     connect(loginBtn, &QPushButton::clicked, this,
-            [=]() { traktClient->authenticate(); });
+            [=]() { TraktClient::instance()->authenticate(); });
 
     setCentralWidget(centralWidget);
 }

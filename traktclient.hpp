@@ -44,8 +44,10 @@ struct StandardShow {
 class TraktClient : public QObject {
     Q_OBJECT
 public:
-    TraktClient(QObject *parent = nullptr);
-
+    static TraktClient *instance() {
+        static TraktClient inst;
+        return &inst;
+    }
     void authenticate();
     bool isAuthenticated();
     void search(QString query);
@@ -55,6 +57,10 @@ signals:
     void searchDone(QList<StandardShow> results);
 
 private:
+    TraktClient();
+    TraktClient(const TraktClient &) = delete;
+    TraktClient &operator=(const TraktClient &) = delete;
+
     bool shouldRefreshToken();
     QNetworkReply *get(QString endpoint, QHash<QString, QString> params = {},
                        bool auth = false);

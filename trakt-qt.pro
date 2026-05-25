@@ -11,8 +11,10 @@ MOC_DIR = build
 OBJECTS_DIR = build
 
 HEADERS += mainwindow.hpp \
-        traktclient.hpp
+        traktclient.hpp \
+        loginwindow.hpp
 
 SOURCES += main.cpp \
         mainwindow.cpp \
-        traktclient.cpp
+        traktclient.cpp \
+        loginwindow.cpp

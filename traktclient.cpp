@@ -8,8 +8,8 @@
 #include <QVariant>
 #include <QNetworkReply>
 
-TraktClient::TraktClient(QObject *parent)
-    : QObject(parent), m_baseUrl("https://api.trakt.tv"), m_settings(this),
+TraktClient::TraktClient()
+    : m_baseUrl("https://api.trakt.tv"), m_settings(this),
       m_isAuthenticated(false) {
 
     m_manager = new QNetworkAccessManager(this);
