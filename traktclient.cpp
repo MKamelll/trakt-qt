@@ -100,6 +100,10 @@ void TraktClient::search(QString query) {
     connect(reply, &QNetworkReply::finished, this, [=]() {
         reply->deleteLater();
         QJsonDocument doc = QJsonDocument::fromJson(reply->readAll());
-        emit searchDone(doc.array());
+        QList<StandardShow> results;
+        for (const auto &show : doc.array()) {
+            results.append(StandardShow::fromJson(show.toObject()));
+        }
+        emit searchDone(results);
     });
 }

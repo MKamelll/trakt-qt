@@ -6,6 +6,40 @@
 #include <QSettings>
 #include <QJsonDocument>
 #include <QJsonArray>
+#include <QJsonObject>
+
+struct StandardShow {
+    QString title;
+    int year;
+    struct {
+        int trakt;
+        QString slug;
+        int tvdb;
+        QString imdb;
+        QString tmdb;
+    } ids;
+
+    static StandardShow fromJson(QJsonObject obj) {
+        StandardShow s;
+        s.title = obj["show"].toObject()["title"].toString();
+        s.year = obj["show"].toObject()["year"].toInt();
+        s.ids.trakt = obj["show"].toObject()["ids"].toObject()["trakt"].toInt();
+        s.ids.slug =
+            obj["show"].toObject()["ids"].toObject()["slug"].toString();
+        s.ids.tvdb = obj["show"].toObject()["ids"].toObject()["tvdb"].toInt();
+        s.ids.imdb =
+            obj["show"].toObject()["ids"].toObject()["imdb"].toString();
+        s.ids.tmdb =
+            obj["show"].toObject()["ids"].toObject()["tmdb"].toString();
+        return s;
+    }
+
+    friend QDebug operator<<(QDebug debug, const StandardShow &show) {
+        debug << "StandardShow(title: " << show.title << ", year: " << show.year
+              << ")";
+        return debug;
+    }
+};
 
 class TraktClient : public QObject {
     Q_OBJECT
@@ -18,7 +52,7 @@ public:
 
 signals:
     void authenticated();
-    void searchDone(QJsonArray results);
+    void searchDone(QList<StandardShow> results);
 
 private:
     bool shouldRefreshToken();
