@@ -4,13 +4,14 @@
 #include "loginwindow.hpp"
 #include <QStackedWidget>
 #include "traktclient.hpp"
+#include "homewindow.hpp"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     setWindowTitle("trakt");
     resize(640, 420);
 
     auto loginwindow = new LoginWindow;
-    auto homeWindow = new QWidget;
+    auto homeWindow = new HomeWindow;
 
     auto stackedWidget = new QStackedWidget;
     stackedWidget->addWidget(loginwindow);
