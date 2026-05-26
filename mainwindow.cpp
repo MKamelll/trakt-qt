@@ -2,7 +2,7 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include "loginview.hpp"
-#include <QStackedWidget>
+#include <QTabWidget>
 #include "traktclient.hpp"
 #include "homeview.hpp"
 #include "searchview.hpp"
@@ -15,18 +15,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     auto *homeView = new HomeView;
     auto *searchView = new SearchView;
 
-    auto stackedWidget = new QStackedWidget;
-    stackedWidget->addWidget(loginView);
-    stackedWidget->addWidget(homeView);
-    stackedWidget->addWidget(searchView);
+    auto *tabs = new QTabWidget;
+    tabs->addTab(homeView, "Home");
+    tabs->addTab(searchView, "Search");
 
     if (TraktClient::instance()->isAuthenticated()) {
-        stackedWidget->setCurrentWidget(searchView);
+        setCentralWidget(tabs);
     } else {
-        stackedWidget->setCurrentWidget(loginView);
+        setCentralWidget(loginView);
     }
-
-    setCentralWidget(stackedWidget);
 }
 
 MainWindow::~MainWindow() {}
