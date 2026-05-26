@@ -8,16 +8,18 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
+struct StandardIDs {
+    int trakt;
+    QString slug;
+    int tvdb;
+    QString imdb;
+    QString tmdb;
+};
+
 struct StandardShow {
     QString title;
     int year;
-    struct {
-        int trakt;
-        QString slug;
-        int tvdb;
-        QString imdb;
-        QString tmdb;
-    } ids;
+    StandardIDs ids;
 
     static StandardShow fromJson(QJsonObject obj) {
         StandardShow s;
@@ -41,6 +43,57 @@ struct StandardShow {
     }
 };
 
+struct ShowDetails {
+    QString title;
+    int year;
+    StandardIDs ids;
+    QString tagLine;
+    QString overview;
+    QDateTime firstAired;
+    int runtime;
+    QString network;
+    QString country;
+    int rating;
+    QList<QString> languages;
+    QList<QString> genres;
+    QString originalTitle;
+
+    static ShowDetails fromJson(QJsonObject obj) {
+        ShowDetails s;
+        s.title = obj["title"].toString();
+        s.year = obj["year"].toInt();
+        s.ids.trakt = obj["ids"].toObject()["trakt"].toInt();
+        s.ids.slug = obj["ids"].toObject()["slug"].toString();
+        s.ids.tvdb = obj["ids"].toObject()["tvdb"].toInt();
+        s.ids.imdb = obj["ids"].toObject()["imdb"].toString();
+        s.ids.tmdb = obj["ids"].toObject()["tmdb"].toString();
+        s.tagLine = obj["tagline"].toString();
+        s.overview = obj["overview"].toString();
+        s.firstAired =
+            QDateTime::fromString(obj["first_aired"].toString(), Qt::ISODate);
+        s.runtime = obj["runtime"].toInt();
+        s.network = obj["network"].toString();
+        s.country = obj["country"].toString();
+        s.rating = obj["rating"].toInt();
+        s.languages = {};
+        for (const auto &lang : obj["languages"].toArray()) {
+            s.languages.append(lang.toString());
+        }
+        s.genres = {};
+        for (const auto &lang : obj["genres"].toArray()) {
+            s.genres.append(lang.toString());
+        }
+        s.originalTitle = obj["original_title"].toString();
+        return s;
+    }
+
+    friend QDebug operator<<(QDebug debug, const ShowDetails &show) {
+        debug << "ShowDetails(title: " << show.title << ", year: " << show.year
+              << ", overview: " << show.overview << ")";
+        return debug;
+    }
+};
+
 class TraktClient : public QObject {
     Q_OBJECT
 public:
@@ -51,10 +104,12 @@ public:
     void authenticate();
     bool isAuthenticated();
     void search(QString query);
+    void getShowDetails(int traktId);
 
 signals:
     void authenticated();
     void searchDone(QList<StandardShow> results);
+    void showDetailsReady(ShowDetails result);
 
 private:
     TraktClient();

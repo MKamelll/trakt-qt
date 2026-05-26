@@ -96,7 +96,7 @@ QNetworkReply *TraktClient::get(QString endpoint,
 }
 
 void TraktClient::search(QString query) {
-    auto reply = get("/search/show", {{"query", query}});
+    auto *reply = get("/search/show", {{"query", query}});
     connect(reply, &QNetworkReply::finished, this, [=]() {
         reply->deleteLater();
         QJsonDocument doc = QJsonDocument::fromJson(reply->readAll());
@@ -105,5 +105,16 @@ void TraktClient::search(QString query) {
             results.append(StandardShow::fromJson(show.toObject()));
         }
         emit searchDone(results);
+    });
+}
+
+void TraktClient::getShowDetails(int traktId) {
+    auto *reply =
+        get(QString("/shows/%1").arg(traktId), {{"extended", "full"}});
+    connect(reply, &QNetworkReply::finished, this, [=]() {
+        reply->deleteLater();
+        QJsonDocument doc = QJsonDocument::fromJson(reply->readAll());
+        ShowDetails result = ShowDetails::fromJson(doc.object());
+        emit showDetailsReady(result);
     });
 }
