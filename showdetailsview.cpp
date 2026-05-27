@@ -12,6 +12,7 @@ ShowDetailsView::ShowDetailsView(ShowDetails show, QWidget *parent)
 
     auto *content = new QWidget;
     auto *layout = new QVBoxLayout(content);
+    layout->setContentsMargins(0, 0, 0, 0);
     auto *scroll = new QScrollArea;
     scroll->setWidget(content);
     scroll->setWidgetResizable(true);
