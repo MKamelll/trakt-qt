@@ -1,6 +1,8 @@
 #include "showdetailsview.hpp"
 #include <QGridLayout>
 #include <QVBoxLayout>
+#include <QLabel>
+#include <QScrollArea>
 
 ShowDetailsView::ShowDetailsView(ShowDetails show, QWidget *parent)
     : QWidget(parent) {
@@ -8,53 +10,82 @@ ShowDetailsView::ShowDetailsView(ShowDetails show, QWidget *parent)
     setWindowTitle(show.title);
     resize(640, 420);
 
-    auto *grid = new QGridLayout;
+    auto *content = new QWidget;
+    auto *layout = new QVBoxLayout(content);
+    auto *scroll = new QScrollArea;
+    scroll->setWidget(content);
+    scroll->setWidgetResizable(true);
+    scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    m_titleLabel = new QLabel(QString("Title: %1").arg(show.title));
-    m_yearLabel = new QLabel(QString("Year: %1").arg(show.year));
-    m_overviewLabel = new QLabel(QString("Overview: %1").arg(show.overview));
-    m_overviewLabel->setWordWrap(true);
-    m_taglineLabel = new QLabel(QString("TagLine: %1").arg(show.tagLine));
-    m_firstAiredLabel = new QLabel(
-        QString("First Aired: %1")
-            .arg(show.firstAired.toString("dddd, MMMM d, yyyy - hh:mm AP t")));
-    m_runtimeLabel =
-        new QLabel(QString("Runtime: %1 minutes").arg(show.runtime));
-    m_networkLabel = new QLabel(QString("Network: %1").arg(show.network));
-    m_countryLabel = new QLabel(QString("Country: %1").arg(show.country));
-    m_ratingLabel = new QLabel(QString("Rating: %1 /10").arg(show.rating));
+    m_titleGroup = createGroup("Title", show.title);
+    m_yearGroup = createGroup("Year", show.year);
+    m_overviewGroup = createGroup("Overview", show.overview, true);
+    m_taglineGroup = createGroup("TagLine", show.tagLine);
+    m_firstAiredGroup = createGroup("First Aired", show.firstAired);
+    m_runtimeGroup = createGroup("Runtime (minutes)", show.runtime);
+    m_networkGroup = createGroup("Network", show.network);
+    m_countryGroup = createGroup("Country", show.country);
+    m_ratingGroup = createGroup("Rating/10", show.rating);
+    m_languagesGroup = createGroup("Languages", show.languages);
+    m_genresGroup = createGroup("Genres", show.genres);
+    m_originalTitleGroup = createGroup("Original Title", show.originalTitle);
 
-    QString languages("Languages: ");
-    for (const auto &lang : show.languages) {
-        languages.append(lang + ", ");
-    }
-    languages.chop(2);
-    m_languagesLabel = new QLabel(languages);
+    QList<QGroupBox *> infoGroups = {
+        m_titleGroup,     m_yearGroup,       m_taglineGroup,
+        m_overviewGroup,  m_firstAiredGroup, m_runtimeGroup,
+        m_networkGroup,   m_countryGroup,    m_ratingGroup,
+        m_languagesGroup, m_genresGroup,     m_originalTitleGroup};
 
-    QString genres("Genres: ");
-    for (const auto &genre : show.genres) {
-        genres.append(genre + ", ");
-    }
-    genres.chop(2);
-    m_genresLabel = new QLabel(genres);
-    m_originalTitleLabel =
-        new QLabel(QString("Original Title: %1").arg(show.originalTitle));
-
-    m_separator = new QFrame;
-    m_separator->setFrameShape(QFrame::VLine);
-
-    QList<QLabel *> infoCol = {
-        m_titleLabel,   m_yearLabel,         m_ratingLabel,  m_taglineLabel,
-        m_genresLabel,  m_languagesLabel,    m_countryLabel, m_firstAiredLabel,
-        m_networkLabel, m_originalTitleLabel};
-
-    for (int i = 0; i < infoCol.size(); i++) {
-        grid->addWidget(infoCol[i]);
+    for (const auto &gp : infoGroups) {
+        layout->addWidget(gp);
     }
 
-    grid->setRowStretch(infoCol.size() + 1, 1);
-    grid->addWidget(m_separator, 0, 1, infoCol.size(), 1);
-    grid->addWidget(m_overviewLabel, 0, 2, infoCol.size(), 1);
+    auto *mainLayout = new QVBoxLayout(this);
+    mainLayout->addWidget(scroll);
+}
 
-    setLayout(grid);
+QGroupBox *ShowDetailsView::createGroup(QString title, QString labelTxt,
+                                        bool wrap) {
+    auto *gp = new QGroupBox(title);
+    auto *vbox = new QVBoxLayout(gp);
+    auto *label = new QLabel(labelTxt);
+    label->setWordWrap(wrap);
+    vbox->addWidget(label);
+    return gp;
+}
+
+QGroupBox *ShowDetailsView::createGroup(QString title, int labelTxt,
+                                        bool wrap) {
+    auto *gp = new QGroupBox(title);
+    auto *vbox = new QVBoxLayout(gp);
+    auto *label = new QLabel(QString::number(labelTxt));
+    label->setWordWrap(wrap);
+    vbox->addWidget(label);
+    return gp;
+}
+
+QGroupBox *ShowDetailsView::createGroup(QString title, QDateTime labelTxt,
+                                        bool wrap) {
+    auto *gp = new QGroupBox(title);
+    auto *vbox = new QVBoxLayout(gp);
+    auto *label =
+        new QLabel(labelTxt.toString("dddd, MMMM d, yyyy - hh:mm AP t"));
+    label->setWordWrap(wrap);
+    vbox->addWidget(label);
+    return gp;
+}
+
+QGroupBox *ShowDetailsView::createGroup(QString title, QList<QString> labelTxt,
+                                        bool wrap) {
+    auto *gp = new QGroupBox(title);
+    auto *vbox = new QVBoxLayout(gp);
+    QString st("");
+    for (const auto &lang : labelTxt) {
+        st.append(lang + ", ");
+    }
+    st.chop(2);
+    auto *label = new QLabel(st);
+    label->setWordWrap(wrap);
+    vbox->addWidget(label);
+    return gp;
 }
