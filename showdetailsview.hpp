@@ -12,7 +12,7 @@ public:
 
 private:
     QGroupBox *createGroup(QString title, QString labelTxt, bool wrap = false);
-    QGroupBox *createGroup(QString title, int labelTxt, bool wrap = false);
+    QGroupBox *createGroup(QString title, double labelTxt, bool wrap = false);
     QGroupBox *createGroup(QString title, QDateTime labelTxt,
                            bool wrap = false);
     QGroupBox *createGroup(QString title, QList<QString> labelTxt,

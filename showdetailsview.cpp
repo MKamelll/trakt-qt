@@ -54,7 +54,7 @@ QGroupBox *ShowDetailsView::createGroup(QString title, QString labelTxt,
     return gp;
 }
 
-QGroupBox *ShowDetailsView::createGroup(QString title, int labelTxt,
+QGroupBox *ShowDetailsView::createGroup(QString title, double labelTxt,
                                         bool wrap) {
     auto *gp = new QGroupBox(title);
     auto *vbox = new QVBoxLayout(gp);

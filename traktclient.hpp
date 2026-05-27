@@ -74,7 +74,7 @@ struct ShowDetails {
         s.runtime = obj["runtime"].toInt();
         s.network = obj["network"].toString();
         s.country = obj["country"].toString();
-        s.rating = obj["rating"].toInt();
+        s.rating = obj["rating"].toDouble();
         s.languages = {};
         for (const auto &lang : obj["languages"].toArray()) {
             s.languages.append(lang.toString());
