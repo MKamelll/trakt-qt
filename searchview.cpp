@@ -2,6 +2,7 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
+#include "showdetailsview.hpp"
 
 SearchView::SearchView(QWidget *parent) : QWidget(parent) {
     m_searchBar = new QLineEdit;
@@ -71,5 +72,7 @@ void SearchView::onSearchDone(QList<StandardShow> results) {
 }
 
 void SearchView::onShowDetails(ShowDetails result) {
-    qDebug() << result << "\n";
+    auto *showView = new ShowDetailsView(result);
+    showView->setAttribute(Qt::WA_DeleteOnClose);
+    showView->show();
 }

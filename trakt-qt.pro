@@ -14,13 +14,15 @@ HEADERS += mainwindow.hpp \
         traktclient.hpp \
         loginview.hpp \
         homeview.hpp \
-        searchview.hpp
+        searchview.hpp \
+        showdetailsview.hpp
 
 SOURCES += main.cpp \
         mainwindow.cpp \
         traktclient.cpp \
         loginview.cpp \
         homeview.cpp \
-        searchview.cpp
+        searchview.cpp \
+        showdetailsview.cpp
 
 RESOURCES += resources.qrc
