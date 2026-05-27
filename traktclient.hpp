@@ -53,7 +53,7 @@ struct ShowDetails {
     int runtime;
     QString network;
     QString country;
-    int rating;
+    double rating;
     QList<QString> languages;
     QList<QString> genres;
     QString originalTitle;
@@ -94,6 +94,43 @@ struct ShowDetails {
     }
 };
 
+struct SeasonDetails {
+    int number;
+    StandardIDs ids;
+    double rating;
+    int episodeCount;
+    QString title;
+    QString overview;
+    QDateTime firstAired;
+    QString network;
+    QString originalTitle;
+
+    static SeasonDetails fromJson(QJsonObject obj) {
+        SeasonDetails s;
+        s.title = obj["title"].toString();
+        s.ids.trakt = obj["ids"].toObject()["trakt"].toInt();
+        s.ids.slug = obj["ids"].toObject()["slug"].toString();
+        s.ids.tvdb = obj["ids"].toObject()["tvdb"].toInt();
+        s.ids.imdb = obj["ids"].toObject()["imdb"].toString();
+        s.ids.tmdb = obj["ids"].toObject()["tmdb"].toString();
+        s.overview = obj["overview"].toString();
+        s.firstAired =
+            QDateTime::fromString(obj["first_aired"].toString(), Qt::ISODate);
+        s.network = obj["network"].toString();
+        s.rating = obj["rating"].toDouble();
+        s.originalTitle = obj["original_title"].toString();
+        s.number = obj["number"].toInt();
+        return s;
+    }
+
+    friend QDebug operator<<(QDebug debug, const SeasonDetails &season) {
+        debug << "SeasonDetails(title: " << season.title
+              << ", number: " << season.number
+              << ", overview: " << season.overview << ")";
+        return debug;
+    }
+};
+
 class TraktClient : public QObject {
     Q_OBJECT
 public:
@@ -105,11 +142,13 @@ public:
     bool isAuthenticated();
     void search(QString query);
     void getShowDetails(int traktId);
+    void getShowSeasons(int traktId);
 
 signals:
     void authenticated();
     void searchDone(QList<StandardShow> results);
     void showDetailsReady(ShowDetails result);
+    void showSeasonsReady(QList<SeasonDetails> results);
 
 private:
     TraktClient();

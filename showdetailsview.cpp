@@ -8,8 +8,9 @@
 #include <QRadioButton>
 #include <QTabWidget>
 
-ShowDetailsView::ShowDetailsView(ShowDetails show, QWidget *parent)
-    : QWidget(parent), m_show(show) {
+ShowDetailsView::ShowDetailsView(ShowDetails show, QList<SeasonDetails> seasons,
+                                 QWidget *parent)
+    : QWidget(parent), m_show(show), m_seasons(seasons) {
 
     setWindowTitle(show.title);
     resize(640, 420);
@@ -19,7 +20,10 @@ ShowDetailsView::ShowDetailsView(ShowDetails show, QWidget *parent)
 
     auto *seasonsWidget = new QWidget;
     auto *seasonsLayout = new QVBoxLayout(seasonsWidget);
-    seasonsLayout->setContentsMargins(0, 0, 0, 0);
+    for (const auto &season : seasons) {
+        seasonsLayout->addWidget(
+            new QLabel(QString("Season %1").arg(season.number)));
+    }
 
     tabs->addTab(infoWidget, "Info");
     tabs->addTab(seasonsWidget, "Seasons");

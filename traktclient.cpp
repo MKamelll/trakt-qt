@@ -118,3 +118,17 @@ void TraktClient::getShowDetails(int traktId) {
         emit showDetailsReady(result);
     });
 }
+
+void TraktClient::getShowSeasons(int traktId) {
+    auto *reply =
+        get(QString("/shows/%1/seasons").arg(traktId), {{"extended", "full"}});
+    connect(reply, &QNetworkReply::finished, this, [=]() {
+        reply->deleteLater();
+        QJsonDocument doc = QJsonDocument::fromJson(reply->readAll());
+        QList<SeasonDetails> result;
+        for (const auto &season : doc.array()) {
+            result.append(SeasonDetails::fromJson(season.toObject()));
+        }
+        emit showSeasonsReady(result);
+    });
+}

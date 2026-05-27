@@ -8,7 +8,8 @@
 class ShowDetailsView : public QWidget {
     Q_OBJECT
 public:
-    ShowDetailsView(ShowDetails show, QWidget *parent = nullptr);
+    ShowDetailsView(ShowDetails show, QList<SeasonDetails> seasons,
+                    QWidget *parent = nullptr);
 
 private:
     QGroupBox *createInfoGroup(QString title, QString labelTxt,
@@ -36,4 +37,5 @@ private:
     QGroupBox *m_originalTitleGroup;
     QFrame *m_separator;
     ShowDetails m_show;
+    QList<SeasonDetails> m_seasons;
 };

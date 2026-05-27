@@ -40,6 +40,9 @@ SearchView::SearchView(QWidget *parent) : QWidget(parent) {
     connect(TraktClient::instance(), &TraktClient::showDetailsReady, this,
             &SearchView::onShowDetails);
 
+    connect(TraktClient::instance(), &TraktClient::showSeasonsReady, this,
+            &SearchView::onShowSeasons);
+
     vbox->addLayout(searchBoxRow);
     vbox->addWidget(m_listWidget);
     vbox->addWidget(m_progressBar);
@@ -63,6 +66,7 @@ void SearchView::onSearchDone(QList<StandardShow> results) {
 
         connect(showDetailsBtn, &QPushButton::clicked, this, [=]() {
             TraktClient::instance()->getShowDetails(show.ids.trakt);
+            TraktClient::instance()->getShowSeasons(show.ids.trakt);
         });
 
         auto *listitem = new QListWidgetItem(m_listWidget);
@@ -71,8 +75,10 @@ void SearchView::onSearchDone(QList<StandardShow> results) {
     }
 }
 
-void SearchView::onShowDetails(ShowDetails result) {
-    auto *showView = new ShowDetailsView(result);
+void SearchView::onShowDetails(ShowDetails show) { m_show = show; }
+void SearchView::onShowSeasons(QList<SeasonDetails> seasons) {
+    m_seasons = seasons;
+    auto *showView = new ShowDetailsView(m_show, m_seasons);
     showView->setAttribute(Qt::WA_DeleteOnClose);
     showView->show();
 }
