@@ -11,12 +11,17 @@ public:
     ShowDetailsView(ShowDetails show, QWidget *parent = nullptr);
 
 private:
-    QGroupBox *createGroup(QString title, QString labelTxt, bool wrap = false);
-    QGroupBox *createGroup(QString title, double labelTxt, bool wrap = false);
-    QGroupBox *createGroup(QString title, QDateTime labelTxt,
-                           bool wrap = false);
-    QGroupBox *createGroup(QString title, QList<QString> labelTxt,
-                           bool wrap = false);
+    QGroupBox *createInfoGroup(QString title, QString labelTxt,
+                               bool wrap = false);
+    QGroupBox *createInfoGroup(QString title, double labelTxt,
+                               bool wrap = false);
+    QGroupBox *createInfoGroup(QString title, QDateTime labelTxt,
+                               bool wrap = false);
+    QGroupBox *createInfoGroup(QString title, QList<QString> labelTxt,
+                               bool wrap = false);
+
+    QScrollArea *createInfoSection(QList<QGroupBox *> infoGroups);
+    QWidget *createControlsPanel();
 
     QGroupBox *m_titleGroup;
     QGroupBox *m_yearGroup;
