@@ -6,26 +6,42 @@
 #include <QSplitter>
 #include <QPushButton>
 #include <QRadioButton>
+#include <QTabWidget>
 
 ShowDetailsView::ShowDetailsView(ShowDetails show, QWidget *parent)
-    : QWidget(parent) {
+    : QWidget(parent), m_show(show) {
 
     setWindowTitle(show.title);
     resize(640, 420);
 
-    m_titleGroup = createInfoGroup("Title", show.title);
-    m_yearGroup = createInfoGroup("Year", show.year);
-    m_overviewGroup = createInfoGroup("Overview", show.overview, true);
-    m_taglineGroup = createInfoGroup("TagLine", show.tagLine);
-    m_firstAiredGroup = createInfoGroup("First Aired", show.firstAired);
-    m_runtimeGroup = createInfoGroup("Runtime (minutes)", show.runtime);
-    m_networkGroup = createInfoGroup("Network", show.network);
-    m_countryGroup = createInfoGroup("Country", show.country);
-    m_ratingGroup = createInfoGroup("Rating/10", show.rating);
-    m_languagesGroup = createInfoGroup("Languages", show.languages);
-    m_genresGroup = createInfoGroup("Genres", show.genres);
+    auto *tabs = new QTabWidget;
+    auto *infoWidget = createInfoWidget();
+
+    auto *seasonsWidget = new QWidget;
+    auto *seasonsLayout = new QVBoxLayout(seasonsWidget);
+    seasonsLayout->setContentsMargins(0, 0, 0, 0);
+
+    tabs->addTab(infoWidget, "Info");
+    tabs->addTab(seasonsWidget, "Seasons");
+
+    auto *mainLayout = new QVBoxLayout(this);
+    mainLayout->addWidget(tabs);
+}
+
+QWidget *ShowDetailsView::createInfoWidget() {
+    m_titleGroup = createInfoGroup("Title", m_show.title);
+    m_yearGroup = createInfoGroup("Year", m_show.year);
+    m_overviewGroup = createInfoGroup("Overview", m_show.overview, true);
+    m_taglineGroup = createInfoGroup("TagLine", m_show.tagLine);
+    m_firstAiredGroup = createInfoGroup("First Aired", m_show.firstAired);
+    m_runtimeGroup = createInfoGroup("Runtime (minutes)", m_show.runtime);
+    m_networkGroup = createInfoGroup("Network", m_show.network);
+    m_countryGroup = createInfoGroup("Country", m_show.country);
+    m_ratingGroup = createInfoGroup("Rating/10", m_show.rating);
+    m_languagesGroup = createInfoGroup("Languages", m_show.languages);
+    m_genresGroup = createInfoGroup("Genres", m_show.genres);
     m_originalTitleGroup =
-        createInfoGroup("Original Title", show.originalTitle);
+        createInfoGroup("Original Title", m_show.originalTitle);
 
     QList<QGroupBox *> infoGroups = {
         m_titleGroup,     m_yearGroup,       m_taglineGroup,
@@ -33,42 +49,35 @@ ShowDetailsView::ShowDetailsView(ShowDetails show, QWidget *parent)
         m_networkGroup,   m_countryGroup,    m_ratingGroup,
         m_languagesGroup, m_genresGroup,     m_originalTitleGroup};
 
-    auto *controlsPanel = createControlsPanel();
-    auto *scroll = createInfoSection(infoGroups);
+    auto *scrollWidget = new QWidget;
+    auto *scrollLayout = new QVBoxLayout(scrollWidget);
+    auto *scrollAreaWidget = new QScrollArea;
+    scrollAreaWidget->setWidget(scrollWidget);
+    scrollAreaWidget->setWidgetResizable(true);
+    scrollAreaWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    auto *mainLayout = new QVBoxLayout(this);
-    mainLayout->addWidget(scroll);
-    mainLayout->addWidget(controlsPanel);
-}
+    for (const auto &gp : infoGroups) {
+        scrollLayout->addWidget(gp);
+    }
 
-QWidget *ShowDetailsView::createControlsPanel() {
-    auto *content = new QWidget;
-    auto *layout = new QHBoxLayout(content);
-    layout->setContentsMargins(0, 0, 0, 0);
+    auto *controlsWidget = new QWidget;
+    auto *controlsLayout = new QHBoxLayout(controlsWidget);
     auto *watchListBtn = new QRadioButton("Watchlist");
     auto *watchedBtn = new QRadioButton("Watched");
     auto *applyBtn = new QPushButton("Apply");
-    layout->addWidget(watchListBtn);
-    layout->addWidget(watchedBtn);
-    layout->addStretch();
-    layout->addWidget(applyBtn);
-    return content;
-}
+    controlsLayout->addWidget(watchListBtn);
+    controlsLayout->addWidget(watchedBtn);
+    controlsLayout->addStretch();
+    controlsLayout->addWidget(applyBtn);
+    controlsWidget->setObjectName("ShowDetailsView-controls-panel");
 
-QScrollArea *ShowDetailsView::createInfoSection(QList<QGroupBox *> infoGroups) {
-    auto *content = new QWidget;
-    auto *layout = new QVBoxLayout(content);
+    auto *widget = new QWidget;
+    auto *layout = new QVBoxLayout(widget);
     layout->setContentsMargins(0, 0, 0, 0);
-    auto *scroll = new QScrollArea;
-    scroll->setWidget(content);
-    scroll->setWidgetResizable(true);
-    scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    layout->addWidget(scrollAreaWidget);
+    layout->addWidget(controlsWidget);
 
-    for (const auto &gp : infoGroups) {
-        layout->addWidget(gp);
-    }
-
-    return scroll;
+    return widget;
 }
 
 QGroupBox *ShowDetailsView::createInfoGroup(QString title, QString labelTxt,

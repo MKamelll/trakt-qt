@@ -20,8 +20,7 @@ private:
     QGroupBox *createInfoGroup(QString title, QList<QString> labelTxt,
                                bool wrap = false);
 
-    QScrollArea *createInfoSection(QList<QGroupBox *> infoGroups);
-    QWidget *createControlsPanel();
+    QWidget *createInfoWidget();
 
     QGroupBox *m_titleGroup;
     QGroupBox *m_yearGroup;
@@ -36,4 +35,5 @@ private:
     QGroupBox *m_genresGroup;
     QGroupBox *m_originalTitleGroup;
     QFrame *m_separator;
+    ShowDetails m_show;
 };

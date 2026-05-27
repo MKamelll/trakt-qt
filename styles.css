@@ -21,3 +21,7 @@ QLineEdit {
 QLineEdit:focus {
     border-color: blue;
 }
+
+QWidget#ShowDetailsView-controls-panel {
+    background: blue;
+}
