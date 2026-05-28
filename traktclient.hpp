@@ -94,6 +94,33 @@ struct ShowDetails {
     }
 };
 
+struct StandardEpisode {
+    int season;
+    int number;
+    QString title;
+    StandardIDs ids;
+
+    static StandardEpisode fromJson(QJsonObject obj) {
+        StandardEpisode s;
+        s.title = obj["title"].toString();
+        s.ids.trakt = obj["ids"].toObject()["trakt"].toInt();
+        s.ids.slug = obj["ids"].toObject()["slug"].toString();
+        s.ids.tvdb = obj["ids"].toObject()["tvdb"].toInt();
+        s.ids.imdb = obj["ids"].toObject()["imdb"].toString();
+        s.ids.tmdb = obj["ids"].toObject()["tmdb"].toString();
+        s.number = obj["number"].toInt();
+        s.season = obj["season"].toInt();
+        return s;
+    }
+
+    friend QDebug operator<<(QDebug debug, const StandardEpisode &episode) {
+        debug << "StandardEpisode(title: " << episode.title
+              << ", number: " << episode.number
+              << ", season: " << episode.season << ")";
+        return debug;
+    }
+};
+
 struct SeasonDetails {
     int number;
     StandardIDs ids;
@@ -104,6 +131,7 @@ struct SeasonDetails {
     QDateTime firstAired;
     QString network;
     QString originalTitle;
+    QList<StandardEpisode> episodes;
 
     static SeasonDetails fromJson(QJsonObject obj) {
         SeasonDetails s;

@@ -122,13 +122,43 @@ void TraktClient::getShowDetails(int traktId) {
 void TraktClient::getShowSeasons(int traktId) {
     auto *reply =
         get(QString("/shows/%1/seasons").arg(traktId), {{"extended", "full"}});
+
     connect(reply, &QNetworkReply::finished, this, [=]() {
         reply->deleteLater();
+
         QJsonDocument doc = QJsonDocument::fromJson(reply->readAll());
-        QList<SeasonDetails> result;
-        for (const auto &season : doc.array()) {
-            result.append(SeasonDetails::fromJson(season.toObject()));
+
+        auto result = std::make_shared<QList<SeasonDetails>>();
+
+        int i = 0;
+        auto arr = doc.array();
+        auto pending = std::make_shared<int>(arr.size() - 1);
+
+        for (const auto &season : arr) {
+            auto seasonDetails = std::make_shared<SeasonDetails>(
+                SeasonDetails::fromJson(season.toObject()));
+            auto *reply =
+                get(QString("/shows/%1/seasons/%2").arg(traktId).arg(i));
+
+            ++i;
+
+            connect(reply, &QNetworkReply::finished, this, [=]() {
+                QList<StandardEpisode> episodes;
+                reply->deleteLater();
+
+                QJsonDocument doc = QJsonDocument::fromJson(reply->readAll());
+
+                for (const auto &episode : doc.array()) {
+                    episodes.append(
+                        StandardEpisode::fromJson(episode.toObject()));
+                }
+
+                seasonDetails->episodes = episodes;
+
+                result->append(*seasonDetails);
+                if (--(*pending) == 0)
+                    emit showSeasonsReady(*result);
+            });
         }
-        emit showSeasonsReady(result);
     });
 }

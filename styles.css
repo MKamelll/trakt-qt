@@ -25,3 +25,18 @@ QLineEdit:focus {
 QWidget#ShowDetailsView-controls-panel {
     background: blue;
 }
+
+QToolBox::tab {
+    background: #2a2a2a;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 4px;
+}
+
+QToolBox::tab:selected {
+    background: blue;
+}
+
+QToolBox::tab:hover {
+    background: #3a3a3a;
+}

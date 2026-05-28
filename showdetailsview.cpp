@@ -7,6 +7,7 @@
 #include <QPushButton>
 #include <QRadioButton>
 #include <QTabWidget>
+#include <QToolBox>
 
 ShowDetailsView::ShowDetailsView(ShowDetails show, QList<SeasonDetails> seasons,
                                  QWidget *parent)
@@ -18,15 +19,22 @@ ShowDetailsView::ShowDetailsView(ShowDetails show, QList<SeasonDetails> seasons,
     auto *tabs = new QTabWidget;
     auto *infoWidget = createInfoWidget();
 
-    auto *seasonsWidget = new QWidget;
-    auto *seasonsLayout = new QVBoxLayout(seasonsWidget);
+    auto *toolBox = new QToolBox;
     for (const auto &season : seasons) {
-        seasonsLayout->addWidget(
-            new QLabel(QString("Season %1").arg(season.number)));
+        auto *seasonWidget = new QWidget;
+        auto *seasonLayout = new QVBoxLayout(seasonWidget);
+
+        for (const auto &episode : season.episodes) {
+            seasonLayout->addWidget(new QLabel(QString("Episode %1: %2")
+                                                   .arg(episode.number)
+                                                   .arg(episode.title)));
+        }
+
+        toolBox->addItem(seasonWidget, QString("Season %1").arg(season.number));
     }
 
     tabs->addTab(infoWidget, "Info");
-    tabs->addTab(seasonsWidget, "Seasons");
+    tabs->addTab(toolBox, "Seasons");
 
     auto *mainLayout = new QVBoxLayout(this);
     mainLayout->addWidget(tabs);
