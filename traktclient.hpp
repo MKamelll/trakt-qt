@@ -170,13 +170,12 @@ public:
     bool isAuthenticated();
     void search(QString query);
     void getShowDetails(int traktId);
-    void getShowSeasons(int traktId);
+    void getShowSeasons(ShowDetails show);
 
 signals:
     void authenticated();
     void searchDone(QList<StandardShow> results);
-    void showDetailsReady(ShowDetails result);
-    void showSeasonsReady(QList<SeasonDetails> results);
+    void showDetailsReady(ShowDetails show, QList<SeasonDetails> seasons);
 
 private:
     TraktClient();

@@ -13,14 +13,11 @@ public:
 private slots:
     void search();
     void onSearchDone(QList<StandardShow> results);
-    void onShowDetails(ShowDetails show);
-    void onShowSeasons(QList<SeasonDetails> seasons);
+    void onShowDetails(ShowDetails show, QList<SeasonDetails> seasons);
 
 private:
     QLineEdit *m_searchBar;
     QPushButton *m_searchBtn;
     QListWidget *m_listWidget;
     LoadingDialog *m_loadingDialog;
-    ShowDetails m_show;
-    QList<SeasonDetails> m_seasons;
 };

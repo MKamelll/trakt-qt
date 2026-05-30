@@ -114,14 +114,14 @@ void TraktClient::getShowDetails(int traktId) {
     connect(reply, &QNetworkReply::finished, this, [=]() {
         reply->deleteLater();
         QJsonDocument doc = QJsonDocument::fromJson(reply->readAll());
-        ShowDetails result = ShowDetails::fromJson(doc.object());
-        emit showDetailsReady(result);
+        ShowDetails show = ShowDetails::fromJson(doc.object());
+        getShowSeasons(show);
     });
 }
 
-void TraktClient::getShowSeasons(int traktId) {
-    auto *reply =
-        get(QString("/shows/%1/seasons").arg(traktId), {{"extended", "full"}});
+void TraktClient::getShowSeasons(ShowDetails show) {
+    auto *reply = get(QString("/shows/%1/seasons").arg(show.ids.trakt),
+                      {{"extended", "full"}});
 
     connect(reply, &QNetworkReply::finished, this, [=]() {
         reply->deleteLater();
@@ -138,7 +138,7 @@ void TraktClient::getShowSeasons(int traktId) {
             auto seasonDetails = std::make_shared<SeasonDetails>(
                 SeasonDetails::fromJson(season.toObject()));
             auto *reply =
-                get(QString("/shows/%1/seasons/%2").arg(traktId).arg(i));
+                get(QString("/shows/%1/seasons/%2").arg(show.ids.trakt).arg(i));
 
             ++i;
 
@@ -162,7 +162,7 @@ void TraktClient::getShowSeasons(int traktId) {
                         [](const SeasonDetails &a, const SeasonDetails &b) {
                             return a.number < b.number;
                         });
-                    emit showSeasonsReady(*result);
+                    emit showDetailsReady(show, *result);
                 }
             });
         }
