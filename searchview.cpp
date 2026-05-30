@@ -8,10 +8,7 @@ SearchView::SearchView(QWidget *parent) : QWidget(parent) {
     m_searchBar = new QLineEdit;
     m_searchBtn = new QPushButton("Search");
     m_listWidget = new QListWidget;
-    m_progressBar = new QProgressBar;
-    m_progressBar->setRange(0, 0);
-    m_progressBar->hide();
-
+    m_loadingDialog = new LoadingDialog;
     m_searchBar->setPlaceholderText("show name...");
 
     auto vbox = new QVBoxLayout;
@@ -20,19 +17,27 @@ SearchView::SearchView(QWidget *parent) : QWidget(parent) {
     searchBoxRow->addWidget(m_searchBar, 90);
     searchBoxRow->addWidget(m_searchBtn, 10);
 
-    connect(m_searchBar, &QLineEdit::returnPressed, this, [=]() {
-        if (!m_searchBar->text().isEmpty()) {
-            m_progressBar->show();
-            TraktClient::instance()->search(m_searchBar->text());
-        }
-    });
+    connect(m_searchBar, &QLineEdit::returnPressed, this, &SearchView::search);
 
-    connect(m_searchBtn, &QPushButton::clicked, this, [=]() {
-        if (!m_searchBar->text().isEmpty()) {
-            m_progressBar->show();
-            TraktClient::instance()->search(m_searchBar->text());
-        }
-    });
+    connect(m_searchBtn, &QPushButton::clicked, this, &SearchView::search);
+
+    connect(m_searchBar, &QLineEdit::returnPressed, m_loadingDialog,
+            &LoadingDialog::show);
+
+    connect(m_searchBtn, &QPushButton::clicked, m_loadingDialog,
+            &LoadingDialog::show);
+
+    connect(m_searchBar, &QLineEdit::returnPressed, m_listWidget,
+            &QListWidget::clear);
+
+    connect(m_searchBtn, &QPushButton::clicked, m_listWidget,
+            &QListWidget::clear);
+
+    connect(TraktClient::instance(), &TraktClient::searchDone, m_loadingDialog,
+            &LoadingDialog::hide);
+
+    connect(TraktClient::instance(), &TraktClient::showSeasonsReady,
+            m_loadingDialog, &LoadingDialog::hide);
 
     connect(TraktClient::instance(), &TraktClient::searchDone, this,
             &SearchView::onSearchDone);
@@ -45,13 +50,17 @@ SearchView::SearchView(QWidget *parent) : QWidget(parent) {
 
     vbox->addLayout(searchBoxRow);
     vbox->addWidget(m_listWidget);
-    vbox->addWidget(m_progressBar);
     vbox->setAlignment(Qt::AlignTop);
     setLayout(vbox);
 }
 
+void SearchView::search() {
+    if (!m_searchBar->text().isEmpty()) {
+        TraktClient::instance()->search(m_searchBar->text());
+    }
+}
+
 void SearchView::onSearchDone(QList<StandardShow> results) {
-    m_progressBar->hide();
     for (auto &show : results) {
         auto *item = new QWidget;
         auto *hbox = new QHBoxLayout(item);
@@ -65,6 +74,7 @@ void SearchView::onSearchDone(QList<StandardShow> results) {
         hbox->addWidget(showDetailsBtn, 10);
 
         connect(showDetailsBtn, &QPushButton::clicked, this, [=]() {
+            m_loadingDialog->show();
             TraktClient::instance()->getShowDetails(show.ids.trakt);
             TraktClient::instance()->getShowSeasons(show.ids.trakt);
         });

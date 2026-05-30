@@ -16,7 +16,8 @@ HEADERS += mainwindow.hpp \
         homeview.hpp \
         searchview.hpp \
         showdetailsview.hpp \
-        infowidget.hpp
+        infowidget.hpp \
+        loadingdialog.hpp
 
 SOURCES += main.cpp \
         mainwindow.cpp \
@@ -25,6 +26,7 @@ SOURCES += main.cpp \
         homeview.cpp \
         searchview.cpp \
         showdetailsview.cpp \
-        infowidget.cpp
+        infowidget.cpp \
+        loadingdialog.cpp
 
 RESOURCES += resources.qrc
