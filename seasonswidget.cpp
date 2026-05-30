@@ -5,30 +5,32 @@
 #include "episodewidget.hpp"
 #include <QScrollArea>
 #include <QToolBox>
+#include "collapsablewidget.hpp"
 
 SeasonsWidget::SeasonsWidget(QList<SeasonDetails> seasons, QWidget *parent)
     : QWidget(parent), m_seasons(seasons) {
 
     auto *layout = new QVBoxLayout(this);
-    layout->setContentsMargins(0, 0, 0, 0);
 
     auto *container_widget = new QWidget;
     auto *container_layout = new QVBoxLayout(container_widget);
-
-    auto *toolbox = new QToolBox;
+    container_layout->setContentsMargins(0, 0, 0, 0);
 
     for (const auto &season : seasons) {
-        auto *seasonWidget = new QWidget;
-        auto *seasonLayout = new QVBoxLayout(seasonWidget);
+        auto *contentWidget = new QWidget;
+        auto *contentLayout = new QVBoxLayout(contentWidget);
+        contentLayout->setContentsMargins(0, 0, 0, 0);
 
         for (const auto &episode : season.episodes) {
-            seasonLayout->addWidget(new EpisodeWidget(episode));
+            contentLayout->addWidget(new EpisodeWidget(episode));
         }
 
-        toolbox->addItem(seasonWidget, QString("Season %1").arg(season.number));
+        auto *section =
+            new CollapsableWidget(QString(season.title), contentWidget);
+
+        container_layout->addWidget(section);
     }
 
-    container_layout->addWidget(toolbox);
     container_layout->addStretch();
 
     auto *scrollarea = new QScrollArea;

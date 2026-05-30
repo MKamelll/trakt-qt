@@ -19,7 +19,8 @@ HEADERS += mainwindow.hpp \
         infowidget.hpp \
         loadingdialog.hpp \
         seasonswidget.hpp \
-        episodewidget.hpp
+        episodewidget.hpp \
+        collapsablewidget.hpp
 
 SOURCES += main.cpp \
         mainwindow.cpp \
@@ -31,6 +32,7 @@ SOURCES += main.cpp \
         infowidget.cpp \
         loadingdialog.cpp \
         seasonswidget.cpp \
-        episodewidget.cpp
+        episodewidget.cpp \
+        collapsablewidget.cpp
 
 RESOURCES += resources.qrc
