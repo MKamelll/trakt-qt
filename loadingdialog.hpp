@@ -1,7 +1,7 @@
 #pragma once
-#include <QDialog>
+#include <QProgressDialog>
 
-class LoadingDialog : public QDialog {
+class LoadingDialog : public QProgressDialog {
     Q_OBJECT
 public:
     LoadingDialog(QWidget *parent = nullptr);
