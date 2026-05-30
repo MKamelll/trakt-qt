@@ -17,7 +17,9 @@ HEADERS += mainwindow.hpp \
         searchview.hpp \
         showdetailsview.hpp \
         infowidget.hpp \
-        loadingdialog.hpp
+        loadingdialog.hpp \
+        seasonswidget.hpp \
+        episodewidget.hpp
 
 SOURCES += main.cpp \
         mainwindow.cpp \
@@ -27,6 +29,8 @@ SOURCES += main.cpp \
         searchview.cpp \
         showdetailsview.cpp \
         infowidget.cpp \
-        loadingdialog.cpp
+        loadingdialog.cpp \
+        seasonswidget.cpp \
+        episodewidget.cpp
 
 RESOURCES += resources.qrc

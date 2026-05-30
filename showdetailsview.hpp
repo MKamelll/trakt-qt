@@ -5,6 +5,7 @@
 #include <QFrame>
 #include <QScrollArea>
 #include "infowidget.hpp"
+#include "seasonswidget.hpp"
 
 class ShowDetailsView : public QWidget {
     Q_OBJECT
@@ -16,4 +17,5 @@ private:
     ShowDetails m_show;
     QList<SeasonDetails> m_seasons;
     InfoWidget *m_infoWidget;
+    SeasonsWidget *m_seasonsWidget;
 };
