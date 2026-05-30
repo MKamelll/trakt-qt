@@ -156,8 +156,14 @@ void TraktClient::getShowSeasons(int traktId) {
                 seasonDetails->episodes = episodes;
 
                 result->append(*seasonDetails);
-                if (--(*pending) == 0)
+                if (--(*pending) == 0) {
+                    std::sort(
+                        result->begin(), result->end(),
+                        [](const SeasonDetails &a, const SeasonDetails &b) {
+                            return a.number < b.number;
+                        });
                     emit showSeasonsReady(*result);
+                }
             });
         }
     });
