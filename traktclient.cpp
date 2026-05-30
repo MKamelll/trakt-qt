@@ -132,7 +132,7 @@ void TraktClient::getShowSeasons(ShowDetails show) {
 
         int i = 0;
         auto arr = doc.array();
-        auto pending = std::make_shared<int>(arr.size() - 1);
+        auto pending = std::make_shared<int>(arr.size());
 
         for (const auto &season : arr) {
             auto seasonDetails = std::make_shared<SeasonDetails>(
