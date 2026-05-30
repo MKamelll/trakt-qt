@@ -6,6 +6,7 @@ CollapsableWidget::CollapsableWidget(QString btnText, QWidget *content,
     : QWidget(parent), m_contentWidget(content), m_btnText(btnText) {
 
     auto *layout = new QVBoxLayout(this);
+    layout->setContentsMargins(0, 0, 0, 0);
 
     auto *m_toggleBtn = new QToolButton;
     m_toggleBtn->setText(m_btnText);
