@@ -148,6 +148,7 @@ struct SeasonDetails {
         s.rating = obj["rating"].toDouble();
         s.originalTitle = obj["original_title"].toString();
         s.number = obj["number"].toInt();
+        s.episodeCount = obj["episode_count"].toInt();
         return s;
     }
 
