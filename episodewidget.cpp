@@ -3,7 +3,7 @@
 #include <QVBoxLayout>
 #include <QLabel>
 
-EpisodeWidget::EpisodeWidget(StandardEpisode episode, QWidget *parent)
+EpisodeWidget::EpisodeWidget(EpisodeDetails episode, QWidget *parent)
     : QFrame(parent), m_episode(episode) {
 
     auto *layout = new QHBoxLayout(this);

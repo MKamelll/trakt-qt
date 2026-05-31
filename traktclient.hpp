@@ -94,27 +94,38 @@ struct ShowDetails {
     }
 };
 
-struct StandardEpisode {
+struct EpisodeDetails {
     int season;
     int number;
     QString title;
     StandardIDs ids;
+    QString overview;
+    QDateTime firstAired;
+    double rating;
+    int runtime;
+    QString originalTitle;
 
-    static StandardEpisode fromJson(QJsonObject obj) {
-        StandardEpisode s;
+    static EpisodeDetails fromJson(QJsonObject obj) {
+        EpisodeDetails s;
+        s.season = obj["season"].toInt();
+        s.number = obj["number"].toInt();
         s.title = obj["title"].toString();
         s.ids.trakt = obj["ids"].toObject()["trakt"].toInt();
         s.ids.slug = obj["ids"].toObject()["slug"].toString();
         s.ids.tvdb = obj["ids"].toObject()["tvdb"].toInt();
         s.ids.imdb = obj["ids"].toObject()["imdb"].toString();
         s.ids.tmdb = obj["ids"].toObject()["tmdb"].toString();
-        s.number = obj["number"].toInt();
-        s.season = obj["season"].toInt();
+        s.overview = obj["overview"].toString();
+        s.firstAired =
+            QDateTime::fromString(obj["first_aired"].toString(), Qt::ISODate);
+        s.rating = obj["rating"].toDouble();
+        s.runtime = obj["runtime"].toInt();
+        s.originalTitle = obj["original_title"].toString();
         return s;
     }
 
-    friend QDebug operator<<(QDebug debug, const StandardEpisode &episode) {
-        debug << "StandardEpisode(title: " << episode.title
+    friend QDebug operator<<(QDebug debug, const EpisodeDetails &episode) {
+        debug << "EpisodeDetails(title: " << episode.title
               << ", number: " << episode.number
               << ", season: " << episode.season << ")";
         return debug;
@@ -131,7 +142,7 @@ struct SeasonDetails {
     QDateTime firstAired;
     QString network;
     QString originalTitle;
-    QList<StandardEpisode> episodes;
+    QList<EpisodeDetails> episodes;
 
     static SeasonDetails fromJson(QJsonObject obj) {
         SeasonDetails s;
@@ -171,7 +182,6 @@ public:
     bool isAuthenticated();
     void search(QString query);
     void getShowDetails(int traktId);
-    void getShowSeasons(ShowDetails show);
 
 signals:
     void authenticated();
@@ -182,6 +192,10 @@ private:
     TraktClient();
     TraktClient(const TraktClient &) = delete;
     TraktClient &operator=(const TraktClient &) = delete;
+    void getShowSeasons(ShowDetails show);
+    void getSeasonEpisodes(ShowDetails show,
+                           std::shared_ptr<SeasonDetails> seasonDetails,
+                           std::function<void(QList<EpisodeDetails>)> callback);
 
     bool shouldRefreshToken();
     QNetworkReply *get(QString endpoint, QHash<QString, QString> params = {},

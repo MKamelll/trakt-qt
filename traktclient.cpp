@@ -130,41 +130,48 @@ void TraktClient::getShowSeasons(ShowDetails show) {
 
         auto result = std::make_shared<QList<SeasonDetails>>();
 
-        int i = 0;
         auto arr = doc.array();
         auto pending = std::make_shared<int>(arr.size());
 
         for (const auto &season : arr) {
             auto seasonDetails = std::make_shared<SeasonDetails>(
                 SeasonDetails::fromJson(season.toObject()));
-            auto *reply =
-                get(QString("/shows/%1/seasons/%2").arg(show.ids.trakt).arg(i));
 
-            ++i;
-
-            connect(reply, &QNetworkReply::finished, this, [=]() {
-                QList<StandardEpisode> episodes;
-                reply->deleteLater();
-
-                QJsonDocument doc = QJsonDocument::fromJson(reply->readAll());
-
-                for (const auto &episode : doc.array()) {
-                    episodes.append(
-                        StandardEpisode::fromJson(episode.toObject()));
-                }
-
-                seasonDetails->episodes = episodes;
-
-                result->append(*seasonDetails);
-                if (--(*pending) == 0) {
-                    std::sort(
-                        result->begin(), result->end(),
-                        [](const SeasonDetails &a, const SeasonDetails &b) {
-                            return a.number < b.number;
-                        });
-                    emit showDetailsReady(show, *result);
-                }
-            });
+            getSeasonEpisodes(show, seasonDetails,
+                              [=](QList<EpisodeDetails> episodes) {
+                                  seasonDetails->episodes = episodes;
+                                  result->append(*seasonDetails);
+                                  if (--(*pending) == 0) {
+                                      std::sort(result->begin(), result->end(),
+                                                [](const SeasonDetails &a,
+                                                   const SeasonDetails &b) {
+                                                    return a.number < b.number;
+                                                });
+                                      emit showDetailsReady(show, *result);
+                                  }
+                              });
         }
+    });
+}
+
+void TraktClient::getSeasonEpisodes(
+    ShowDetails show, std::shared_ptr<SeasonDetails> seasonDetails,
+    std::function<void(QList<EpisodeDetails>)> callback) {
+
+    auto *reply = get(QString("/shows/%1/seasons/%2")
+                          .arg(show.ids.trakt)
+                          .arg(seasonDetails->number));
+
+    connect(reply, &QNetworkReply::finished, this, [=]() {
+        QList<EpisodeDetails> episodes;
+        reply->deleteLater();
+
+        QJsonDocument doc = QJsonDocument::fromJson(reply->readAll());
+
+        for (const auto &episode : doc.array()) {
+            episodes.append(EpisodeDetails::fromJson(episode.toObject()));
+        }
+
+        callback(episodes);
     });
 }

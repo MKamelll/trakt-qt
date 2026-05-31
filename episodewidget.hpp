@@ -4,8 +4,8 @@
 
 class EpisodeWidget : public QFrame {
 public:
-    EpisodeWidget(StandardEpisode episode, QWidget *parent = nullptr);
+    EpisodeWidget(EpisodeDetails episode, QWidget *parent = nullptr);
 
 private:
-    StandardEpisode m_episode;
+    EpisodeDetails m_episode;
 };
