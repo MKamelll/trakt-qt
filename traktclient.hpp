@@ -188,18 +188,27 @@ signals:
     void searchDone(QList<StandardShow> results);
     void showDetailsReady(ShowDetails show, QList<SeasonDetails> seasons);
 
+private slots:
+    void saveTokens();
+
 private:
     TraktClient();
     TraktClient(const TraktClient &) = delete;
     TraktClient &operator=(const TraktClient &) = delete;
+    bool shouldRefreshToken();
+    void getWithAuth(QString endpoint,
+                     std::function<void(QNetworkReply *)> callback);
+    void getWithAuth(QString endpoint, QHash<QString, QString> params,
+                     std::function<void(QNetworkReply *)> callback);
+    void get(QString endpoint, QHash<QString, QString> params,
+             std::function<void(QNetworkReply *)> callback);
+    void get(QString endpoint, std::function<void(QNetworkReply *)> callback);
+
+    bool loadTokens();
     void getShowSeasons(ShowDetails show);
     void getSeasonEpisodes(ShowDetails show,
                            std::shared_ptr<SeasonDetails> seasonDetails,
                            std::function<void(QList<EpisodeDetails>)> callback);
-
-    bool shouldRefreshToken();
-    QNetworkReply *get(QString endpoint, QHash<QString, QString> params = {},
-                       bool auth = false);
 
     QString m_baseUrl;
     QString m_clientId;
@@ -209,4 +218,5 @@ private:
     QOAuth2AuthorizationCodeFlow *m_oauth;
     QDateTime m_expiresAt;
     bool m_isAuthenticated;
+    bool m_isRefreshingToken;
 };
