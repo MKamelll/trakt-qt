@@ -109,18 +109,18 @@ struct EpisodeDetails {
         EpisodeDetails s;
         s.season = obj["season"].toInt();
         s.number = obj["number"].toInt();
-        s.title = obj["title"].toString();
+        s.title = obj["title"].toString("N/A");
         s.ids.trakt = obj["ids"].toObject()["trakt"].toInt();
-        s.ids.slug = obj["ids"].toObject()["slug"].toString();
+        s.ids.slug = obj["ids"].toObject()["slug"].toString("N/A");
         s.ids.tvdb = obj["ids"].toObject()["tvdb"].toInt();
-        s.ids.imdb = obj["ids"].toObject()["imdb"].toString();
-        s.ids.tmdb = obj["ids"].toObject()["tmdb"].toString();
-        s.overview = obj["overview"].toString();
-        s.firstAired =
-            QDateTime::fromString(obj["first_aired"].toString(), Qt::ISODate);
+        s.ids.imdb = obj["ids"].toObject()["imdb"].toString("N/A");
+        s.ids.tmdb = obj["ids"].toObject()["tmdb"].toString("N/A");
+        s.overview = obj["overview"].toString("N/A");
+        s.firstAired = QDateTime::fromString(obj["first_aired"].toString("N/A"),
+                                             Qt::ISODate);
         s.rating = obj["rating"].toDouble();
         s.runtime = obj["runtime"].toInt();
-        s.originalTitle = obj["original_title"].toString();
+        s.originalTitle = obj["original_title"].toString("N/A");
         return s;
     }
 
@@ -146,20 +146,20 @@ struct SeasonDetails {
 
     static SeasonDetails fromJson(QJsonObject obj) {
         SeasonDetails s;
-        s.title = obj["title"].toString();
-        s.ids.trakt = obj["ids"].toObject()["trakt"].toInt();
-        s.ids.slug = obj["ids"].toObject()["slug"].toString();
-        s.ids.tvdb = obj["ids"].toObject()["tvdb"].toInt();
-        s.ids.imdb = obj["ids"].toObject()["imdb"].toString();
-        s.ids.tmdb = obj["ids"].toObject()["tmdb"].toString();
-        s.overview = obj["overview"].toString();
-        s.firstAired =
-            QDateTime::fromString(obj["first_aired"].toString(), Qt::ISODate);
-        s.network = obj["network"].toString();
-        s.rating = obj["rating"].toDouble();
-        s.originalTitle = obj["original_title"].toString();
-        s.number = obj["number"].toInt();
-        s.episodeCount = obj["episode_count"].toInt();
+        s.title = obj.value("title").toString("N/A");
+        s.ids.trakt = obj.value("ids").toObject().value("trakt").toInt();
+        s.ids.slug = obj.value("ids").toObject().value("slug").toString("N/A");
+        s.ids.tvdb = obj.value("ids").toObject().value("tvdb").toInt();
+        s.ids.imdb = obj.value("ids").toObject().value("imdb").toString("N/A");
+        s.ids.tmdb = obj.value("ids").toObject().value("tmdb").toString("N/A");
+        s.overview = obj.value("overview").toString("N/A");
+        s.firstAired = QDateTime::fromString(
+            obj.value("first_aired").toString("N/A"), Qt::ISODate);
+        s.network = obj.value("network").toString("N/A");
+        s.rating = obj.value("rating").toDouble();
+        s.originalTitle = obj.value("original_title").toString("N/A");
+        s.number = obj.value("number").toInt();
+        s.episodeCount = obj.value("episode_count").toInt();
         return s;
     }
 

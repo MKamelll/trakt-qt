@@ -21,11 +21,12 @@ SeasonsWidget::SeasonsWidget(QList<SeasonDetails> seasons, QWidget *parent)
         auto *contentLayout = new QVBoxLayout(contentWidget);
 
         for (const auto &episode : season.episodes) {
-            contentLayout->addWidget(new EpisodeWidget(episode));
+            auto *episodeSection = new CollapsableWidget(
+                episode.title, new EpisodeWidget(episode));
+            contentLayout->addWidget(episodeSection);
         }
 
-        auto *section =
-            new CollapsableWidget(QString(season.title), contentWidget);
+        auto *section = new CollapsableWidget(season.title, contentWidget);
 
         container_layout->addWidget(section);
     }

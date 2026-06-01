@@ -1,8 +1,8 @@
 #pragma once
-#include <QFrame>
+#include <QWidget>
 #include "traktclient.hpp"
 
-class EpisodeWidget : public QFrame {
+class EpisodeWidget : public QWidget {
 public:
     EpisodeWidget(EpisodeDetails episode, QWidget *parent = nullptr);
 

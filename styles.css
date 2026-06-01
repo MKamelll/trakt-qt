@@ -40,12 +40,3 @@ QToolBox::tab:selected {
 QToolBox::tab:hover {
     background: #3a3a3a;
 }
-
-QFrame#episode-frame {
-    background: #2a2a2a;
-}
-
-QFrame#episode-frame:hover {
-    border: 1px solid blue;
-    border-radius: 6px;
-}
