@@ -40,6 +40,8 @@ SeasonsWidget::SeasonsWidget(QList<SeasonDetails> seasons, QWidget *parent)
     right_scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     splitter->addWidget(right_scroll);
+    splitter->setStretchFactor(0, 1);
+    splitter->setStretchFactor(1, 2);
 
     connect(list_widget, &QListWidget::currentItemChanged, this,
             [=](QListWidgetItem *current, QListWidgetItem *) {
