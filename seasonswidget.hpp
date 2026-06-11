@@ -1,6 +1,7 @@
 #pragma once
 #include <QWidget>
 #include "traktclient.hpp"
+#include "episodeswidget.hpp"
 
 class SeasonsWidget : public QWidget {
 public:
@@ -8,4 +9,5 @@ public:
 
 private:
     QList<SeasonDetails> m_seasons;
+    QList<EpisodesWidget *> m_episodesWidgetList;
 };

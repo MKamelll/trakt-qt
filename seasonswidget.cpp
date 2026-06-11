@@ -6,6 +6,9 @@
 #include <QScrollArea>
 #include <QToolBox>
 #include "collapsablewidget.hpp"
+#include <QListWidget>
+#include <QSplitter>
+#include "episodeswidget.hpp"
 
 SeasonsWidget::SeasonsWidget(QList<SeasonDetails> seasons, QWidget *parent)
     : QWidget(parent), m_seasons(seasons) {
@@ -13,30 +16,41 @@ SeasonsWidget::SeasonsWidget(QList<SeasonDetails> seasons, QWidget *parent)
     auto *layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
 
-    auto *container_widget = new QWidget;
-    auto *container_layout = new QVBoxLayout(container_widget);
+    auto *list_widget = new QListWidget;
+    auto *splitter = new QSplitter(Qt::Horizontal);
 
+    int i = 0;
     for (const auto &season : seasons) {
-        auto *contentWidget = new QWidget;
-        auto *contentLayout = new QVBoxLayout(contentWidget);
-
-        for (const auto &episode : season.episodes) {
-            auto *episodeSection = new CollapsableWidget(
-                episode.title, new EpisodeWidget(episode));
-            contentLayout->addWidget(episodeSection);
-        }
-
-        auto *section = new CollapsableWidget(season.title, contentWidget);
-
-        container_layout->addWidget(section);
+        auto *list_item = new QListWidgetItem;
+        list_item->setText(season.title);
+        list_item->setData(Qt::UserRole, i++);
+        list_widget->addItem(list_item);
+        m_episodesWidgetList.append(new EpisodesWidget(season.episodes, this));
     }
 
-    container_layout->addStretch();
+    auto *left_scroll = new QScrollArea;
+    left_scroll->setWidget(list_widget);
+    left_scroll->setWidgetResizable(true);
+    left_scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    auto *scrollarea = new QScrollArea;
-    scrollarea->setWidget(container_widget);
-    scrollarea->setWidgetResizable(true);
-    scrollarea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    splitter->addWidget(left_scroll);
 
-    layout->addWidget(scrollarea);
+    auto *right_scroll = new QScrollArea;
+    right_scroll->setWidgetResizable(true);
+    right_scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    splitter->addWidget(right_scroll);
+
+    connect(list_widget, &QListWidget::currentItemChanged, this,
+            [=](QListWidgetItem *current, QListWidgetItem *) {
+                if (current) {
+                    auto i = current->data(Qt::UserRole).toInt();
+                    right_scroll->setWidget(m_episodesWidgetList[i]);
+                }
+            });
+
+    if (!seasons.isEmpty())
+        list_widget->setCurrentRow(0);
+
+    layout->addWidget(splitter);
 }
