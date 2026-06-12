@@ -14,4 +14,6 @@ EpisodesWidget::EpisodesWidget(QList<EpisodeDetails> episodes, QWidget *parent)
     for (const auto &episode : episodes) {
         layout->addWidget(new EpisodeWidget(episode));
     }
+
+    layout->addStretch(1);
 }
