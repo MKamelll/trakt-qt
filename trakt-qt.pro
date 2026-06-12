@@ -11,6 +11,7 @@ MOC_DIR = build
 OBJECTS_DIR = build
 
 HEADERS += mainwindow.hpp \
+        awesome.hpp \
         traktclient.hpp \
         loginview.hpp \
         homeview.hpp \
@@ -40,3 +41,6 @@ SOURCES += main.cpp \
         episodeswidget.cpp
 
 RESOURCES += resources.qrc
+
+CONFIG+=fontAwesomeFree
+include(QtAwesome/QtAwesome.pri)
