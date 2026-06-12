@@ -5,6 +5,7 @@
 #include "awesome.hpp"
 #include <QToolButton>
 #include "collapsablewidget.hpp"
+#include <QGridLayout>
 
 EpisodeWidget::EpisodeWidget(EpisodeDetails episode, QWidget *parent)
     : QWidget(parent), m_episode(episode) {
@@ -14,27 +15,17 @@ EpisodeWidget::EpisodeWidget(EpisodeDetails episode, QWidget *parent)
     setObjectName("episode-frame");
 
     auto *content_widget = new QWidget;
-    auto *content_layout = new QHBoxLayout(content_widget);
-    content_layout->setContentsMargins(0, 0, 0, 0);
+    auto *content_layout = new QGridLayout(content_widget);
 
-    auto *left_widget = new QWidget;
-    auto *left_layout = new QVBoxLayout(left_widget);
     auto *overview = new SectionWidget("Overview", episode.overview, true);
-    left_layout->addWidget(overview);
-
-    auto *right_widget = new QWidget;
-    auto *right_layout = new QVBoxLayout(right_widget);
     auto *runtime = new SectionWidget("Runtime", episode.runtime);
-    right_layout->addWidget(runtime);
-
     auto *rating = new SectionWidget("Rating/10", episode.rating);
-    right_layout->addWidget(rating);
-
     auto *firstAired = new SectionWidget("First Aired", episode.firstAired);
-    right_layout->addWidget(firstAired);
 
-    content_layout->addWidget(left_widget);
-    content_layout->addWidget(right_widget);
+    content_layout->addWidget(overview, 0, 0, 4, 1);
+    content_layout->addWidget(runtime, 0, 1);
+    content_layout->addWidget(rating, 1, 1);
+    content_layout->addWidget(firstAired, 2, 1);
 
     auto *markWatchedBtn = new QToolButton;
     markWatchedBtn->setToolButtonStyle(Qt::ToolButtonIconOnly);
