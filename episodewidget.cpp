@@ -7,7 +7,6 @@ EpisodeWidget::EpisodeWidget(EpisodeDetails episode, QWidget *parent)
     : QWidget(parent), m_episode(episode) {
 
     auto *layout = new QHBoxLayout(this);
-    layout->setContentsMargins(0, 0, 0, 0);
     setObjectName("episode-frame");
 
     auto *left_layout = new QVBoxLayout;
