@@ -9,6 +9,7 @@
 #include <QListWidget>
 #include <QSplitter>
 #include "episodeswidget.hpp"
+#include <QStackedWidget>
 
 SeasonsWidget::SeasonsWidget(QList<SeasonDetails> seasons, QWidget *parent)
     : QWidget(parent), m_seasons(seasons) {
@@ -16,6 +17,7 @@ SeasonsWidget::SeasonsWidget(QList<SeasonDetails> seasons, QWidget *parent)
     auto *layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
 
+    auto *episodesStack = new QStackedWidget;
     auto *list_widget = new QListWidget;
     auto *splitter = new QSplitter(Qt::Horizontal);
 
@@ -25,7 +27,7 @@ SeasonsWidget::SeasonsWidget(QList<SeasonDetails> seasons, QWidget *parent)
         list_item->setText(season.title);
         list_item->setData(Qt::UserRole, i++);
         list_widget->addItem(list_item);
-        m_episodesWidgetList.append(new EpisodesWidget(season.episodes, this));
+        episodesStack->addWidget(new EpisodesWidget(season.episodes, this));
     }
 
     auto *left_scroll = new QScrollArea;
@@ -36,6 +38,7 @@ SeasonsWidget::SeasonsWidget(QList<SeasonDetails> seasons, QWidget *parent)
     splitter->addWidget(left_scroll);
 
     auto *right_scroll = new QScrollArea;
+    right_scroll->setWidget(episodesStack);
     right_scroll->setWidgetResizable(true);
     right_scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
@@ -47,7 +50,7 @@ SeasonsWidget::SeasonsWidget(QList<SeasonDetails> seasons, QWidget *parent)
             [=](QListWidgetItem *current, QListWidgetItem *) {
                 if (current) {
                     auto i = current->data(Qt::UserRole).toInt();
-                    right_scroll->setWidget(m_episodesWidgetList[i]);
+                    episodesStack->setCurrentIndex(i);
                 }
             });
 

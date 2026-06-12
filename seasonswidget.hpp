@@ -9,5 +9,4 @@ public:
 
 private:
     QList<SeasonDetails> m_seasons;
-    QList<EpisodesWidget *> m_episodesWidgetList;
 };
