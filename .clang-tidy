@@ -1,5 +1,12 @@
 ---
-Checks:          'clang-diagnostic-*,clang-analyzer-*'
+Checks: >
+  clang-diagnostic-*,
+  clang-analyzer-*,
+  bugprone-*,
+  cppcoreguidelines-*,
+  performance-*,
+  modernize-*
+
 WarningsAsErrors: ''
 HeaderFileExtensions:
   - ''
